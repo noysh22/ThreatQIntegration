@@ -70,6 +70,13 @@ namespace Siemplify.Integrations.ThreatQ
                         new ModuleSettingsProperty
                         {
                             ModuleName = Identifier,
+                            PropertyName = Settings.ApiClientId,
+                            PropertyDisplayName = Settings.ApiClientId,
+                            PropertyType = ParamTypeEnum.String
+                        },
+                        new ModuleSettingsProperty
+                        {
+                            ModuleName = Identifier,
                             PropertyName = Settings.ApiKey,
                             PropertyDisplayName = Settings.ApiKey,
                             PropertyType = ParamTypeEnum.Password

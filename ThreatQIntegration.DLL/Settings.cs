@@ -10,6 +10,7 @@ namespace Siemplify.Integrations.ThreatQ
     {
         public static readonly string ApiBaseHost = "Api Host";
         public static readonly string ApiUserName = "Api User";
+        public static readonly string ApiClientId = "Api Client Id";
         public static readonly string ApiKey = "Api Key";
     }
 }
