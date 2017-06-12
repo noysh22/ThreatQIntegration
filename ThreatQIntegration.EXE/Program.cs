@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Siemplify.Integrations.ThreatQ;
+using Siemplify.Integrations.ThreatQ.Data;
 
 namespace ThreatQIntegration.EXE
 {
@@ -20,7 +21,11 @@ namespace ThreatQIntegration.EXE
 
             var client = new ThreatQApiClient(host, clientId, user, pass);
 
-            var indicators = client.GetRawIndicators().Result;
+            //var indicators = client.GetRawIndicators().Result;
+            var indicators = client.GetIndicators(
+                limit: 5,
+                includeTypes: ApiDataTypes.Score | ApiDataTypes.Status | ApiDataTypes.Sources | ApiDataTypes.Type).Result;
+            //var indicators = client.GetIndicators();
 
             Console.WriteLine(indicators);
 

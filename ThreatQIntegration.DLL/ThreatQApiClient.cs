@@ -8,7 +8,9 @@ using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using RestSharp;
+using RestSharp.Newtonsoft.Json;
 using Siemplify.Integrations.ThreatQ.Data;
+using RestRequest = RestSharp.RestRequest;
 
 namespace Siemplify.Integrations.ThreatQ
 {
@@ -18,6 +20,9 @@ namespace Siemplify.Integrations.ThreatQ
         private const string GetApiTokenFormat = @"token?grant_type=password&client_id={0}";
         private const string AuthParamName = "Authorization";
         private const string AuthParamFormat = "{0} {1}";
+        private const string IndicatorsEndpointFormat = "/indicators?sort={0}";
+        private const string LimitFormat = "&limit={0}";
+        private const string OffsetFormat = "&offset={0}";
 
         private readonly RestClient _client;
         private readonly ApiToken _token;
@@ -35,9 +40,14 @@ namespace Siemplify.Integrations.ThreatQ
             return new { email = user, password = pass };
         }
 
-        private static RestRequest CreateRestRequest(string url, Method method, object body = null)
+        private static RestRequest CreateRestRequest(string url, Method method, object body = null, bool useNewtonsoftSerializer = true)
         {
             var request = new RestRequest(url, method) { RequestFormat = DataFormat.Json };
+
+            if (useNewtonsoftSerializer)
+            {
+                request.JsonSerializer = new NewtonsoftJsonSerializer();
+            }
 
             if (null != body)
             {
@@ -115,6 +125,11 @@ namespace Siemplify.Integrations.ThreatQ
 
         private RestRequest CreateRequestWithToken(string url, Method method, object body = null)
         {
+            if (null == _token)
+            {
+                throw new ThreatQNullTokenException("Api token cannot be null");
+            }
+
             var request = CreateRestRequest(url, method, body);
 
             // Add the security token to the request
@@ -133,19 +148,15 @@ namespace Siemplify.Integrations.ThreatQ
             ApiDataTypes includeTypes = ApiDataTypes.None,
             SortOrder order = SortOrder.ASC)
         {
-            const string indicatorsEndpointFormat = "/indicators?sort={0}";
-            const string limitFormat = "&limit={0}";
-            const string offsetFormat = "&offset={0}";
-
-            var endpoint = string.Format(indicatorsEndpointFormat, GetSortOrderString(order));
+            var endpoint = string.Format(IndicatorsEndpointFormat, GetSortOrderString(order));
 
             endpoint += GetAdditionalTypesString(includeTypes);
 
-            endpoint += string.Format(limitFormat, limit);
+            endpoint += string.Format(LimitFormat, limit);
 
             if (0 != offset)
             {
-                endpoint += string.Format(offsetFormat, offset);
+                endpoint += string.Format(OffsetFormat, offset);
             }
 
             var request = CreateRequestWithToken(endpoint, Method.GET);
@@ -153,6 +164,30 @@ namespace Siemplify.Integrations.ThreatQ
             var response = await _client.ExecuteTaskAsync(request);
 
             return response.Content;
+        }
+
+        public async Task<IndicatorsList> GetIndicators(uint offset = 0,
+            uint limit = 100,
+            ApiDataTypes includeTypes = ApiDataTypes.None,
+            SortOrder order = SortOrder.ASC)
+        {
+            var endpoint = string.Format(IndicatorsEndpointFormat, GetSortOrderString(order));
+
+            endpoint += GetAdditionalTypesString(includeTypes);
+
+            endpoint += string.Format(LimitFormat, limit);
+
+            if (0 != offset)
+            {
+                endpoint += string.Format(OffsetFormat, offset);
+            }
+
+            var request = CreateRequestWithToken(endpoint, Method.GET);
+
+            var response = await _client.ExecuteTaskAsync<IndicatorsList>(request);
+            //var response = _client.Execute<IndicatorsList>(request);
+
+            return response.Data;
         }
     }
 }

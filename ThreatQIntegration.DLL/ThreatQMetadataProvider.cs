@@ -88,12 +88,18 @@ namespace Siemplify.Integrations.ThreatQ
             }
         }
 
-        public override Task Test(Dictionary<string, string> paramsWithValues)
+        public override async Task Test(Dictionary<string, string> paramsWithValues)
         {
             var apiBaseHost = paramsWithValues.GetOrDefault(Settings.ApiBaseHost);
             if (apiBaseHost.IsEmpty())
             {
                 throw new Exception(string.Format("Not found <{0}> Field.", Settings.ApiBaseHost));
+            }
+
+            var clientId = paramsWithValues.GetOrDefault(Settings.ApiClientId);
+            if (clientId.IsEmpty())
+            {
+                throw new Exception(string.Format("Not found <{0}> Field.", Settings.ApiClientId));
             }
 
             var apiUsername = paramsWithValues.GetOrDefault(Settings.ApiUserName);
@@ -108,7 +114,8 @@ namespace Siemplify.Integrations.ThreatQ
                 throw new Exception(string.Format("Not found <{0}> Field.", Settings.ApiKey));
             }
 
-            throw new NotImplementedException();
+            var client = new ThreatQApiClient(apiBaseHost, clientId, apiUsername, apiKey);
+            await client.GetRawIndicators(limit: 5).ConfigureAwait(false);
         }
     }
 }

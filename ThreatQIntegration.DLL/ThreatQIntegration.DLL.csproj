@@ -36,6 +36,9 @@
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.105.2.3\lib\net452\RestSharp.dll</HintPath>
     </Reference>
+    <Reference Include="RestSharp.Newtonsoft.Json, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.Newtonsoft.Json.1.1.0\lib\portable45-net45+win8+wp8+wpa81\RestSharp.Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Siemplify.Common">
       <HintPath>..\..\SiemplifyDll\Siemplify.Common.dll</HintPath>
     </Reference>
@@ -51,8 +54,15 @@
   <ItemGroup>
     <Compile Include="Data\ApiDataTypes.cs" />
     <Compile Include="Data\ApiToken.cs" />
+    <Compile Include="Data\Indicator.cs" />
+    <Compile Include="Data\IndicatorsList.cs" />
+    <Compile Include="Data\IndicatorType.cs" />
+    <Compile Include="Data\Pivot.cs" />
+    <Compile Include="Data\Score.cs" />
+    <Compile Include="Data\Source.cs" />
+    <Compile Include="Data\Status.cs" />
     <Compile Include="ThreatQApiClient.cs" />
-    <Compile Include="ThreatQManager.cs" />
+    <Compile Include="ThreatQExceptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ThreatQMetadataProvider.cs" />
