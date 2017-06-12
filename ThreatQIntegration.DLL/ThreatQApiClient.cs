@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Security.AccessControl;
-using System.Text;
 using System.Threading.Tasks;
 using RestSharp;
 using RestSharp.Newtonsoft.Json;
@@ -142,6 +137,14 @@ namespace Siemplify.Integrations.ThreatQ
             return request;
         }
 
+        /// <summary>
+        /// Get a JSON string representing indicators from ThreatQ api
+        /// </summary>
+        /// <param name="offset">Index offset of the indicators</param>
+        /// <param name="limit">Number of indicators to return</param>
+        /// <param name="includeTypes">Additional data to include with the returned indicator object</param>
+        /// <param name="order">Order of indicators, order by create_at</param>
+        /// <returns>String representing JSON of the indicators</returns>
         public async Task<string> GetRawIndicators(
             uint offset = 0,
             uint limit = 100,
@@ -166,7 +169,16 @@ namespace Siemplify.Integrations.ThreatQ
             return response.Content;
         }
 
-        public async Task<IndicatorsList> GetIndicators(uint offset = 0,
+        /// <summary>
+        /// Get a list of <see cref="Indicator"/> objects
+        /// </summary>
+        /// <param name="offset">Index offset of the indicators</param>
+        /// <param name="limit">Number of indicators to return</param>
+        /// <param name="includeTypes">Additional data to include with the returned indicator object</param>
+        /// <param name="order">Order of indicators, order by create_at</param>
+        /// <returns>List of <see cref="Indicator"/> objects</returns>
+        public async Task<IndicatorsList> GetIndicators(
+            uint offset = 0,
             uint limit = 100,
             ApiDataTypes includeTypes = ApiDataTypes.None,
             SortOrder order = SortOrder.ASC)
